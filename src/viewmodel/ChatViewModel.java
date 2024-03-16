@@ -1,5 +1,8 @@
+package viewmodel;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import model.Model;
 
 import java.io.BufferedReader;
 import java.io.IOException;

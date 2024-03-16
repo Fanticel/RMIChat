@@ -1,3 +1,5 @@
+package model;
+
 import util.NamedPropertyChangeSubject;
 
 public interface Model extends NamedPropertyChangeSubject {

@@ -16,9 +16,7 @@ public class ServerModel implements NamedPropertyChangeSubject {
   public void sendMessage(String message,
       PropertyChangeListener originalListener, String name) {
     for (PropertyChangeListener l : listenerList) {
-
       l.propertyChange(new PropertyChangeEvent(this, "message", name, message));
-
     }
   }
 

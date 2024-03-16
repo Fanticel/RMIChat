@@ -1,9 +1,12 @@
+package view;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
+import viewmodel.ChatViewModel;
 
 public class ChatViewController {
   @FXML TextArea mainTextArea;
