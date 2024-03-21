@@ -7,10 +7,20 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class ServerModel implements NamedPropertyChangeSubject {
-  ArrayList<PropertyChangeListener> listenerList;
 
-  public ServerModel() {
+
+  ArrayList<PropertyChangeListener> listenerList;
+  private static ServerModel instance;
+
+  private ServerModel() {
     listenerList = new ArrayList<>();
+  }
+
+  public static synchronized ServerModel getInstance(){
+    if (instance == null) {
+      instance = new ServerModel();
+    }
+    return instance;
   }
 
   public void sendMessage(String message,

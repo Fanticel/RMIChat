@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class ThreadedServer implements Runnable, PropertyChangeListener {
   Thread s1;
@@ -32,36 +33,50 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
   }
 
   @Override public void run() {
-    try{
-      System.out.println("→Server ip: " + InetAddress.getLocalHost().getHostAddress());
+    try
+    {
+      System.out.println(
+          "→Server ip: " + InetAddress.getLocalHost().getHostAddress());
       System.out.println("→Waiting for a client...");
       currentSocket = welcomeSocket.accept();
       s1 = new Thread(new ThreadedServer(welcomeSocket, model));
       s1.start();
-      System.out.println("→Found a client... connecting to " + currentSocket.getInetAddress().getHostAddress());
-      int currentThreadNum = Thread.activeCount()-3;
-      System.out.println("\t\tStarting a listening thread number " + (currentThreadNum+1)  + "...");
-      in = new BufferedReader(new InputStreamReader(currentSocket.getInputStream()));
+      System.out.println(
+          "→Found a client... connecting to " + currentSocket.getInetAddress()
+              .getHostAddress());
+      int currentThreadNum = Thread.activeCount() - 3;
+      System.out.println(
+          "\t\tStarting a listening thread number " + (currentThreadNum + 1)
+              + "...");
+      in = new BufferedReader(
+          new InputStreamReader(currentSocket.getInputStream()));
       out = new PrintWriter(currentSocket.getOutputStream(), true);
-      out.println("->->->Connected with " + currentSocket.getInetAddress().getHostAddress());
+      out.println("->->->Connected with " + currentSocket.getInetAddress()
+          .getHostAddress());
       String userName = in.readLine();
-      out.println("\tLogged in as "+ userName + "\n______________________");
+      out.println("\tLogged in as " + userName + "\n______________________");
       model.sendMessage((userName + " entered the chat"), this, "\t->System: ");
-      while(true){
+      while (true)
+      {
         message = in.readLine();
-        if (message.equals("^Q")){
+        if (message.equals("^Q"))
+        {
           currentSocket.close();
-          System.out.println(userName+" left");
+          System.out.println(userName + " left");
           model.sendMessage((userName + " left the chat"), this, "\t->System");
           break;
         }
-        else {
+        else
+        {
           model.sendMessage(message, this, userName);
-          System.out.println(userName+"(Thread:"+currentThreadNum+") sent a message.");
+          System.out.println(
+              userName + "(Thread:" + currentThreadNum + ") sent a message.");
         }
       }
     }
-    catch (IOException e){e.printStackTrace();}
+    catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override public void propertyChange(PropertyChangeEvent evt) {
