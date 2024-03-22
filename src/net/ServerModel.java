@@ -13,11 +13,26 @@ public class ServerModel implements NamedPropertyChangeSubject {
     listenerList = new ArrayList<>();
   }
 
-  public void sendMessage(String message,
-      PropertyChangeListener originalListener, String name) {
+  public void broadcast(String message, String name) {
     for (PropertyChangeListener l : listenerList) {
       l.propertyChange(new PropertyChangeEvent(this, "message", name, message));
+
     }
+  }
+
+  public void broadcastToElse(PropertyChangeListener oL, String message,
+      String name) {
+    for (PropertyChangeListener l : listenerList) {
+      if (!l.equals(oL)) {
+        l.propertyChange(
+            new PropertyChangeEvent(this, "message", name, message));
+      }
+    }
+  }
+
+  public void privateAnswer(PropertyChangeListener l, String message,
+      String name) {
+    l.propertyChange(new PropertyChangeEvent(this, "message", name, message));
   }
 
   @Override public void addListener(String name,
