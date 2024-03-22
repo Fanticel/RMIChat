@@ -11,18 +11,20 @@ public class ViewHandler {
   private Scene currentScene;
   private Stage primaryStage;
   private ChatViewController chatViewController;
+  private LoginViewController loginViewController;
   public ViewHandler(ViewModelFactory viewModelFactory) {
     this.viewModelFactory = viewModelFactory;
     currentScene = new Scene(new Region());
   }
   public void start(Stage primaryStage){
     this.primaryStage = primaryStage;
-    openView("chatView");
+    openView("LoginView");
   }
   public void openView(String id){
     Region root = null;
     switch(id){
       case "chatView" -> root = LoadChatViewController("ChatView.fxml");
+      case "LoginView" -> root = LoadLoginViewController("LoginView.fxml");
     }
     currentScene.setRoot(root);
     String title = "";
@@ -52,5 +54,23 @@ public class ViewHandler {
       chatViewController.reset();
     }
     return chatViewController.getRoot();
+  }
+  public Region LoadLoginViewController(String fxmlFile){
+    if (loginViewController == null){
+      try{
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource(fxmlFile));
+        Region root = loader.load();
+        loginViewController = loader.getController();
+        loginViewController.init(this, viewModelFactory.getLoginViewModel(), root);
+      }catch (Exception e){
+        e.printStackTrace();
+      }
+    }
+    else
+    {
+      loginViewController.reset();
+    }
+    return loginViewController.getRoot();
   }
 }

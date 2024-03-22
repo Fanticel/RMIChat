@@ -8,12 +8,18 @@ import java.net.Socket;
 public class ViewModelFactory {
   private Model model;
   private ChatViewModel chatViewModel;
+  private LoginViewModel loginViewModel;
   public ViewModelFactory(Model model, Socket localSocket) throws IOException {
     this.model = model;
     chatViewModel = new ChatViewModel(model, localSocket);
+    loginViewModel = new LoginViewModel(model);
   }
 
   public ChatViewModel getChatViewModel(){
     return chatViewModel;
   }
+  public LoginViewModel getLoginViewModel(){
+    return loginViewModel;
+  }
+
 }
