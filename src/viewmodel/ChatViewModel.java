@@ -18,6 +18,7 @@ public class ChatViewModel {
   private PrintWriter out;
   private BufferedReader in;
   private String history;
+  private final String name = "name";
   private Thread threadedListener = new Thread(()->{
     while(true){
       try {
@@ -37,7 +38,7 @@ public class ChatViewModel {
     this.localSocket = localSocket;
     out = new PrintWriter(localSocket.getOutputStream(), true);
     in = new BufferedReader(new InputStreamReader(localSocket.getInputStream()));
-    out.println("Name");
+    out.println("LOG;" + name);
     threadedListener.start();
   }
   public StringProperty getMainText(){
@@ -47,7 +48,7 @@ public class ChatViewModel {
     return inputText;
   }
   public void messageApproved(){
-    out.println(inputText.get());
+    out.println("SEND;" + inputText.get());
     inputText.set("");
   }
 }
