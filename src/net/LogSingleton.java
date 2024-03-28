@@ -4,11 +4,12 @@ public class LogSingleton
 {
   private static LogSingleton instance;
   private String log;
+  private int threadCount;
 
   private LogSingleton()
   {
     log = "";
-
+    threadCount = 0;
   }
 
   public static synchronized LogSingleton getInstance()
@@ -18,6 +19,7 @@ public class LogSingleton
       instance = new LogSingleton();
 
     }
+
     return instance;
 
   }
@@ -29,7 +31,15 @@ public class LogSingleton
 
   public void addLog(String addString){
     log += addString;
-
+  }
+  public void increaseThreadCount(){
+    threadCount ++;
+  }
+  public void decreaseThreadCount(){
+    threadCount --;
+  }
+  public int getThreadCount(){
+    return threadCount;
   }
 
 }

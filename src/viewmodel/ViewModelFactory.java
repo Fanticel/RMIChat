@@ -9,16 +9,20 @@ public class ViewModelFactory {
   private Model model;
   private ChatViewModel chatViewModel;
   private LoginViewModel loginViewModel;
-  public ViewModelFactory(Model model, Socket localSocket) throws IOException {
+  private Socket socket;
+
+  public ViewModelFactory(Model model, Socket localSocket){
     this.model = model;
-    chatViewModel = new ChatViewModel(model, localSocket);
-    loginViewModel = new LoginViewModel(model);
+    this.socket = localSocket;
   }
 
-  public ChatViewModel getChatViewModel(){
+  public ChatViewModel getChatViewModel() throws IOException {
+    chatViewModel = new ChatViewModel(model, socket);
     return chatViewModel;
   }
-  public LoginViewModel getLoginViewModel(){
+
+  public LoginViewModel getLoginViewModel() {
+    loginViewModel = new LoginViewModel(model);
     return loginViewModel;
   }
 

@@ -13,16 +13,34 @@ import java.net.Socket;
 public class ChatViewModel {
   private StringProperty mainText;
   private StringProperty inputText;
+  private StringProperty textField;
+  private StringProperty errorField;
   private Model model;
   private Socket localSocket;
   private PrintWriter out;
   private BufferedReader in;
   private String history;
-  private final String name = "name";
-  private Thread threadedListener = new Thread(()->{
-    while(true){
+  private Thread askForUpdate = new Thread(() -> {
+    while (true) {
       try {
-        history += "\n" + in.readLine();
+        Thread.sleep(1000);
+        out.println("SIZE;");
+      }
+      catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  });
+  private Thread threadedListener = new Thread(() -> {
+    while (true) {
+      try {
+        String request = in.readLine();
+        if (request.contains(":")){
+          history += "\n" + request;
+        }
+        else {
+          textField.set("Number of people: " + request);
+        }
         mainText.set(history);
       }
       catch (IOException e) {
@@ -30,25 +48,44 @@ public class ChatViewModel {
       }
     }
   });
+
   public ChatViewModel(Model model, Socket localSocket) throws IOException {
     history = "";
     mainText = new SimpleStringProperty();
     inputText = new SimpleStringProperty();
+    textField = new SimpleStringProperty();
+    errorField = new SimpleStringProperty();
     this.model = model;
     this.localSocket = localSocket;
     out = new PrintWriter(localSocket.getOutputStream(), true);
-    in = new BufferedReader(new InputStreamReader(localSocket.getInputStream()));
-    out.println("LOG;" + name);
+    in = new BufferedReader(
+        new InputStreamReader(localSocket.getInputStream()));
     threadedListener.start();
+    askForUpdate.start();
   }
-  public StringProperty getMainText(){
+
+  public StringProperty getMainText() {
     return mainText;
   }
-  public StringProperty getInputText(){
+
+  public StringProperty getInputText() {
     return inputText;
   }
-  public void messageApproved(){
-    out.println("SEND;" + inputText.get());
+
+  public void messageApproved() {
+    String message = inputText.get();
+    try{
+      model.sendMessage(message);
+    }
+    catch (Exception e){
+      errorField.set(e.getMessage());
+    }
     inputText.set("");
+  }
+  public StringProperty textFieldProperty() {
+    return textField;
+  }
+  public StringProperty getErrorField(){
+    return errorField;
   }
 }

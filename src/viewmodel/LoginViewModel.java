@@ -6,6 +6,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import model.Model;
 
+import java.io.IOException;
+
 public class LoginViewModel
 {
   private StringProperty errorProperty;
@@ -38,8 +40,8 @@ public class LoginViewModel
 
   //Idea is you set the username in model from where you make the server connection
   // with the given username and get the confirmation
-  public boolean accept (){
-    return model.setusername;
+  public boolean accept () throws IOException {
+    return model.setName(usernameProperty.get());
   }
 }
 

@@ -46,6 +46,7 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
       System.out.println(
           "→Found a client... connecting to " + currentSocket.getInetAddress()
               .getHostAddress());
+      LogSingleton.getInstance().increaseThreadCount();
       int currentThreadNum = Thread.activeCount() - 3;
       System.out.println(
           "\t\tStarting a listening thread number " + (currentThreadNum + 1)
@@ -69,6 +70,7 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
       case "initCall" -> out.println("initCallReply");
       case "ECHO" -> out.println(reqSplit[1]);
       case "^Q" -> {
+        LogSingleton.getInstance().decreaseThreadCount();
         working = false;
         currentSocket.close();
         System.out.println(userName + " left");
@@ -78,6 +80,9 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
         System.out.println(userName+"(Thread:"+currentThreadNum+") sent a message.");}
       case "LOG" -> { userName = reqSplit[1];
         out.println("Logged in as " + userName);
+      }
+      case "SIZE" -> {
+        out.println(LogSingleton.getInstance().getThreadCount());
       }
       default -> out.println("\nError 01, unrecognised command.\n");
     }
