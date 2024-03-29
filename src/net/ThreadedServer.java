@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class ThreadedServer implements Runnable, PropertyChangeListener {
   private Thread s1;
@@ -21,9 +22,18 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
   private Socket currentSocket;
   private PrintWriter out;
   private BufferedReader in;
+  Scanner systemIn;
   private String userName;
   private int currentThreadNum;
   private boolean working = true;
+  private LogSaver logSaver;
+  Thread adminLogRequest = new Thread(() -> {
+    while (true) {
+      if (systemIn.nextLine().toLowerCase().equals("log")){
+        System.out.println(LogSingleton.getInstance().getLog());
+      }
+    }
+  });
 
   public ThreadedServer(ServerSocket welcomeSocket, ServerModel model) {
     this.welcomeSocket = welcomeSocket;
@@ -32,13 +42,16 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
     currentSocket = null;
     out = null;
     in = null;
+    systemIn = new Scanner(System.in);
+    logSaver = new LogSaver();
+    logSaver.start();
     userName = "DefaultUserName";
     currentThreadNum = 0;
+    adminLogRequest.start();
   }
 
   @Override public void run() {
-    try
-    {
+    try {
       System.out.println(
           "→Server ip: " + InetAddress.getLocalHost().getHostAddress());
       System.out.println("→Waiting for a client...");
@@ -56,8 +69,9 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
       in = new BufferedReader(
           new InputStreamReader(currentSocket.getInputStream()));
       out = new PrintWriter(currentSocket.getOutputStream(), true);
-      out.println("->->->Connected with " + currentSocket.getInetAddress().getHostAddress());
-      while(working){
+      out.println("->->->Connected with " + currentSocket.getInetAddress()
+          .getHostAddress());
+      while (working) {
         request = in.readLine();
         String[] reqSplit = request.split(";");
         handleRequest(reqSplit);
@@ -67,8 +81,9 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
       e.printStackTrace();
     }
   }
+
   public void handleRequest(String[] reqSplit) throws IOException {
-    switch (reqSplit[0]){
+    switch (reqSplit[0]) {
       case "initCall" -> {
         out.println("initCallReply");
       }
@@ -76,35 +91,61 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
       case "^Q" -> {
         LogSingleton.getInstance().decreaseThreadCount();
         working = false;
+        logSaver.closeFile();
         currentSocket.close();
         System.out.println(userName + " left");
-        model.broadcast((userName + " left the chat"),"\t->System");}
+        model.broadcast((userName + " left the chat"), "\t->System");
+      }
       case "SEND" -> {
-        model.broadcast(reqSplit[1], userName);
-        LogSingleton.getInstance().addLog(LocalTime.now().format(
-            DateTimeFormatter.ofPattern("HH:mm:ss")) + "\t" + userName +": "  + reqSplit[1] + "\n");
-        System.out.println(userName+"(Thread:"+currentThreadNum+") sent a message.");}
-      case "LOG" -> { userName = reqSplit[1];
-//        out.println("Logged in as " + userName);
-        model.privateAnswer(this, ("Logged in as " + userName), "\tSystem");
+        try {
+          model.broadcast(reqSplit[1],
+              (LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+                  + "\t" + userName));
+          LogSingleton.getInstance().addLog(
+              LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+                  + "\t" + userName + ": " + reqSplit[1] + "\n");
+          logSaver.addToLog(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+              + "\t" + userName + ": " + reqSplit[1] + "\n");
+          System.out.println(
+              userName + "(Thread:" + currentThreadNum + ") sent a message.");
+        }
+        catch (Exception e) {
+          model.privateAnswer(this, ("\nError 02, unrecognised command.\n"),
+              "\tSystem");
+        }
+      }
+      case "LOG" -> {
+        try {
+          userName = reqSplit[1];
+          model.privateAnswer(this, ("Logged in as " + userName), "\tSystem");
+        }
+        catch (Exception e) {
+          model.privateAnswer(this, ("\nError 02, unrecognised command.\n"),
+              "\tSystem");
+        }
       }
       case "SIZE" -> {
-        model.privateAnswer(this, String.valueOf(LogSingleton.getInstance().getThreadCount()), "SIZE");
-//        out.println(LogSingleton.getInstance().getThreadCount());
+        model.privateAnswer(this,
+            String.valueOf(LogSingleton.getInstance().getThreadCount()),
+            "SIZE");
       }
       case "GETLOG" -> {
-        out.println(LogSingleton.getInstance().getLog());
+        model.privateAnswer(this, LogSingleton.getInstance().getLog(), "Past messages\n");
       }
       case "IP" -> {
-        model.privateAnswer(this,currentSocket.getRemoteSocketAddress().toString().replace("/",""),"Private");
+        model.privateAnswer(this,
+            currentSocket.getRemoteSocketAddress().toString().replace("/", ""),
+            "Private");
       }
-      default -> out.println("\nError 01, unrecognised command.\n");
+      default ->
+          model.privateAnswer(this, ("\nError 01, unrecognised command.\n"),
+              "\tSystem");
     }
-  }
+  } //out.println("\nError 01, unrecognised command.\n")
 
   @Override public void propertyChange(PropertyChangeEvent evt) {
-    if (currentSocket != null && in != null && out != null){
-      out.println("\t"+evt.getOldValue() + ": "+ evt.getNewValue());
+    if (currentSocket != null && in != null && out != null) {
+      out.println("\t" + evt.getOldValue() + ": " + evt.getNewValue());
     }
   }
 }

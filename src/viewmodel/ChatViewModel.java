@@ -39,7 +39,7 @@ public class ChatViewModel {
           textField.set("Number of people: " + request.replace("SIZE: ", ""));
         }
         else {
-          history += "\n" + request;
+          history = request + "\n" + history;
         }
         mainText.set(history);
       }
@@ -60,6 +60,7 @@ public class ChatViewModel {
     out = new PrintWriter(localSocket.getOutputStream(), true);
     in = new BufferedReader(
         new InputStreamReader(localSocket.getInputStream()));
+    out.println("GETLOG;");
     threadedListener.start();
     askForUpdate.start();
   }
