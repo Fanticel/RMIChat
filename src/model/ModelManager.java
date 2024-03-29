@@ -1,5 +1,6 @@
 package model;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +36,9 @@ public class ModelManager implements Model{
   @Override public boolean setName(String name) throws IOException {
     out.println("LOG;" + name);
     System.out.println(in.readLine());
-    return in.readLine().equals("Logged in as " + name);
+    String response = in.readLine();
+    System.out.println(response + "\n" + "\t\tSystem: Logged in as " + name);
+    return response.equals("\t\tSystem: Logged in as " + name);
   }
 
   @Override public void addListener(String name,

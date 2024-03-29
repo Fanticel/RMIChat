@@ -2,6 +2,7 @@ package model;
 
 import util.NamedPropertyChangeSubject;
 
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 public interface Model extends NamedPropertyChangeSubject {

@@ -10,6 +10,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class ThreadedServer implements Runnable, PropertyChangeListener {
   private Thread s1;
@@ -77,12 +79,19 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
         model.broadcast((userName + " left the chat"),"\t->System");}
       case "SEND" -> {
         model.broadcast(reqSplit[1], userName);
+        LogSingleton.getInstance().addLog(LocalTime.now().format(
+            DateTimeFormatter.ofPattern("HH:mm:ss")) + "\t" + userName +": "  + reqSplit[1] + "\n");
         System.out.println(userName+"(Thread:"+currentThreadNum+") sent a message.");}
       case "LOG" -> { userName = reqSplit[1];
-        out.println("Logged in as " + userName);
+//        out.println("Logged in as " + userName);
+        model.privateAnswer(this, ("Logged in as " + userName), "\tSystem");
       }
       case "SIZE" -> {
-        out.println(LogSingleton.getInstance().getThreadCount());
+        model.privateAnswer(this, String.valueOf(LogSingleton.getInstance().getThreadCount()), "SIZE");
+//        out.println(LogSingleton.getInstance().getThreadCount());
+      }
+      case "GETLOG" -> {
+        out.println(LogSingleton.getInstance().getLog());
       }
       default -> out.println("\nError 01, unrecognised command.\n");
     }

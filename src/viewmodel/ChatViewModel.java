@@ -35,11 +35,11 @@ public class ChatViewModel {
     while (true) {
       try {
         String request = in.readLine();
-        if (request.contains(":")){
-          history += "\n" + request;
+        if (request.split("->")[0].contains("SIZE")){
+          textField.set("Number of people: " + request.replace("SIZE: ", ""));
         }
         else {
-          textField.set("Number of people: " + request);
+          history += "\n" + request;
         }
         mainText.set(history);
       }

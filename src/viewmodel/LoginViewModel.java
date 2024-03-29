@@ -41,6 +41,7 @@ public class LoginViewModel
   //Idea is you set the username in model from where you make the server connection
   // with the given username and get the confirmation
   public boolean accept () throws IOException {
+    System.out.println("calledTheViewModel");
     return model.setName(usernameProperty.get());
   }
 }
