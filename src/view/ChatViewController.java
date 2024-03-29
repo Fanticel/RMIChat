@@ -36,7 +36,7 @@ public class ChatViewController {
     textField.textProperty().bindBidirectional(chatViewModel.textFieldProperty());
     errorBox.textProperty().bindBidirectional(chatViewModel.getErrorField());
     inputField.requestFocus();
-    FileInputStream imageInputStream = new FileInputStream("C:\\Users\\duzyw\\Downloads\\defaultimage.jpg");
+    FileInputStream imageInputStream = new FileInputStream("src\\view\\img\\defaultimage.jpg");
     imageView.setImage(new Image(imageInputStream));
   }
   public void reset(){

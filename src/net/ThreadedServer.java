@@ -69,7 +69,9 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
   }
   public void handleRequest(String[] reqSplit) throws IOException {
     switch (reqSplit[0]){
-      case "initCall" -> out.println("initCallReply");
+      case "initCall" -> {
+        out.println("initCallReply");
+      }
       case "ECHO" -> out.println(reqSplit[1]);
       case "^Q" -> {
         LogSingleton.getInstance().decreaseThreadCount();

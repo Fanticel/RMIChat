@@ -28,6 +28,13 @@ public class ServerModel implements NamedPropertyChangeSubject {
       l.propertyChange(new PropertyChangeEvent(this, "message", name, message));
     }
   }
+  public void broadcastToElse(PropertyChangeListener oL, String message, String name){
+    for (PropertyChangeListener l : listenerList){
+      if (!l.equals(oL)){
+        l.propertyChange(new PropertyChangeEvent(this, "message", name, message));
+      }
+    }
+  }
   public void privateAnswer(PropertyChangeListener oL, String message, String name){
     oL.propertyChange(new PropertyChangeEvent(this, "message", name, message));
   }
