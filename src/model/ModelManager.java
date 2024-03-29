@@ -25,7 +25,8 @@ public class ModelManager implements Model{
   @Override public void sendMessage(String message) throws Exception {
     if (!(message == null)){
       if (!message.isEmpty()){
-        out.println("SEND;" + message);
+        if (message.equals("IP"))out.println("IP;");
+        else out.println("SEND;" + message);
       }
     }
     else {

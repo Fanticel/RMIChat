@@ -93,6 +93,9 @@ public class ThreadedServer implements Runnable, PropertyChangeListener {
       case "GETLOG" -> {
         out.println(LogSingleton.getInstance().getLog());
       }
+      case "IP" -> {
+        model.privateAnswer(this,currentSocket.getRemoteSocketAddress().toString().replace("/",""),"Private");
+      }
       default -> out.println("\nError 01, unrecognised command.\n");
     }
   }
