@@ -14,7 +14,7 @@ public class LogSaver extends Thread{
   }
   private void fileChange(String fName){
     this.fName = fName;
-    fullFileName = "src\\net\\Logs\\"+fName + ".txt";
+    fullFileName = "Server\\src\\net\\Logs\\"+fName + ".txt";
     file = new File(fullFileName);
     if (file.exists()){
       try {
