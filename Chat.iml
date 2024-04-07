@@ -9,5 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="javafx-sdk-21.0" level="project" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" exported="" name="javafx" level="application" />
+    <orderEntry type="library" exported="" name="MyObserver-1.4 (1)" level="application" />
   </component>
 </module>
