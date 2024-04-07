@@ -9,4 +9,5 @@ public interface RemoteModel extends RemoteSubject{
   String login(PropertyChangeListener listener,String nickname) throws RemoteException;
   String getNumUsers() throws RemoteException;
   String getIp() throws RemoteException;
+  String getLog() throws RemoteException;
 }

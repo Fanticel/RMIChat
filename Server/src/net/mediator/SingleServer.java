@@ -52,6 +52,10 @@ public class SingleServer implements RemoteModel {
     return "1099";
   }
 
+  @Override public String getLog() throws RemoteException {
+    return net.LogSingleton.getInstance().getLog();
+  }
+
   @Override public boolean addListener(PropertyChangeListener listener,
       String propertyName) throws RemoteException {
     if (propertyName.equals("user")) {
