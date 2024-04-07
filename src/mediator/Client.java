@@ -1,0 +1,58 @@
+package mediator;
+
+import model.Model;
+import utility.observer.event.ObserverEvent;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+
+public class Client implements PropertyChangeListener
+
+
+{
+  private RemoteModel server;
+
+
+  public Client()
+  {
+    try
+    {
+      server = (RemoteModel) Naming.lookup("rmi://localhost:1099/Chat");
+      server.addListener(this, "user");
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  public void sendMessage(String message) throws Exception
+  {
+    server.sendMessage(this, message);
+  }
+
+  public boolean disconnect() throws RemoteException{
+    return server.disconnect(this);
+  }
+
+  public String login(String nickname) throws RemoteException{
+    return server.login(this, nickname);
+  }
+
+  public String getNumUsers() throws RemoteException{
+    return server.getNumUsers();
+  }
+
+  public String getIp() throws RemoteException{
+    return server.getIp();
+  }
+
+  @Override public void propertyChange(PropertyChangeEvent evt)
+  {
+    System.out.println("\t"+evt.getOldValue() + ": "+ evt.getNewValue());
+  }
+}
