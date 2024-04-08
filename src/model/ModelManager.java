@@ -17,10 +17,8 @@ public class ModelManager implements Model, PropertyChangeListener{
 
   public ModelManager(Client client) throws IOException {
     this.client = client;
-    //this.localSocket = localSocket;
     this.changeListener = null;
-    //out = new PrintWriter(localSocket.getOutputStream(), true);
-    //in = new BufferedReader(new InputStreamReader(localSocket.getInputStream()));
+
   }
 
   @Override public void sendMessage(String message) throws Exception {
@@ -55,6 +53,11 @@ public class ModelManager implements Model, PropertyChangeListener{
   @Override public String getLog() throws RemoteException
   {
     return client.getLog();
+  }
+
+  @Override public String getNumUsers() throws RemoteException
+  {
+    return client.getNumUsers();
   }
 
   @Override public void addListener(String name,

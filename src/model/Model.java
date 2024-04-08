@@ -13,4 +13,5 @@ public interface Model extends NamedPropertyChangeSubject {
    boolean login(String nickname) throws RemoteException;
   String getIp() throws RemoteException ,ServerNotActiveException;
   String getLog() throws RemoteException;
+  String getNumUsers() throws RemoteException;
 }
