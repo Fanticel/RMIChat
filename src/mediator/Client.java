@@ -8,6 +8,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 
 public class Client implements PropertyChangeListener
 
