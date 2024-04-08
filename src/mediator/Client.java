@@ -1,7 +1,11 @@
 package mediator;
 
+
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 
@@ -43,7 +47,18 @@ public class Client implements PropertyChangeListener
   }
 
   public String getIp() throws RemoteException{
-    return server.getIp();
+    try
+    {
+      return server.getIp();
+    }
+    catch (ServerNotActiveException e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public String getLog() throws RemoteException{
+    return server.getLog();
   }
 
   @Override public void propertyChange(PropertyChangeEvent evt)
