@@ -13,4 +13,5 @@ public interface RemoteModel extends RemoteSubject
   String getNumUsers() throws RemoteException;
   String getIp() throws RemoteException, ServerNotActiveException;
   String getLog() throws RemoteException;
+
 }
