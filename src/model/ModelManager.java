@@ -1,32 +1,32 @@
 package model;
 
+import mediator.Client;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
 
-public class ModelManager implements Model{
-  ArrayList<PropertyChangeListener> listenerArrayList;
-  Socket localSocket;
-  private PrintWriter out;
-  private BufferedReader in;
+import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 
-  public ModelManager(Socket localSocket) throws IOException {
-    this.localSocket = localSocket;
-    listenerArrayList = new ArrayList<>();
-    out = new PrintWriter(localSocket.getOutputStream(), true);
-    in = new BufferedReader(new InputStreamReader(localSocket.getInputStream()));
+public class ModelManager implements Model, PropertyChangeListener{
+  private PropertyChangeListener changeListener;
+
+
+  private Client client;
+
+
+  public ModelManager(Client client) throws IOException {
+    this.client = client;
+    //this.localSocket = localSocket;
+    this.changeListener = null;
+    //out = new PrintWriter(localSocket.getOutputStream(), true);
+    //in = new BufferedReader(new InputStreamReader(localSocket.getInputStream()));
   }
 
   @Override public void sendMessage(String message) throws Exception {
     if (!(message == null)){
       if (!message.isEmpty()){
-        if (message.equals("IP"))out.println("IP;");
-        else out.println("SEND;" + message);
+         client.sendMessage( message);
       }
     }
     else {
@@ -34,25 +34,49 @@ public class ModelManager implements Model{
     }
   }
 
-  @Override public boolean setName(String name) throws IOException {
-    out.println("LOG;" + name);
-    System.out.println(in.readLine());
-    String response = in.readLine();
-    System.out.println(response + "\n" + "\t\tSystem: Logged in as " + name);
-    return response.equals("\t\tSystem: Logged in as " + name);
+  @Override public boolean setName(String name) throws IOException
+  {
+    return false;
+  }
+
+  @Override public boolean login(String nickname) throws RemoteException
+  {
+    String response = client.login( nickname);
+
+    return response.equals("\t\tSystem: Logged in as " + nickname);
+  }
+
+  @Override public String getIp() throws RemoteException, ServerNotActiveException
+  {
+    return client.getIp();
+  }
+
+
+  @Override public String getLog() throws RemoteException
+  {
+    return client.getLog();
   }
 
   @Override public void addListener(String name,
       PropertyChangeListener listener) {
     if (name.equals("mes")){
-      listenerArrayList.add(listener);
+      changeListener = listener;
     }
   }
 
   @Override public void removeListener(String name,
       PropertyChangeListener listener) {
     if (name.equals("mes")){
-      listenerArrayList.remove(listener);
+      changeListener = null;
     }
   }
+
+
+  @Override public void propertyChange(PropertyChangeEvent evt)
+  {
+    changeListener.propertyChange(evt);
+
+
+  }
+
 }
