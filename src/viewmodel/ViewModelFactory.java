@@ -11,13 +11,12 @@ public class ViewModelFactory {
   private LoginViewModel loginViewModel;
   private Socket socket;
 
-  public ViewModelFactory(Model model, Socket localSocket){
+  public ViewModelFactory(Model model){
     this.model = model;
-    this.socket = localSocket;
   }
 
   public ChatViewModel getChatViewModel() throws IOException {
-    chatViewModel = new ChatViewModel(model, socket);
+    chatViewModel = new ChatViewModel(model);
     return chatViewModel;
   }
 

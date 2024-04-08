@@ -7,6 +7,8 @@ import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.server.RemoteServer;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -48,8 +50,10 @@ public class SingleServer implements RemoteModel {
     return String.valueOf(LogSingleton.getInstance().getThreadCount());
   }
 
-  @Override public String getIp() throws RemoteException {
-    return "1099";
+  @Override public String getIp() throws RemoteException,
+      ServerNotActiveException
+  {
+    return RemoteServer.getClientHost();
   }
 
   @Override public String getLog() throws RemoteException {
